@@ -32,7 +32,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
 
     }
-    @PostMapping("/{id}/assign-book")
+    @PostMapping("/assign-book")
     public ResponseEntity<UserWithBooksResponseDTO> assignBookToUser(@RequestBody AssignBookToUserRequestDTO request) {
         UserWithBooksResponseDTO response = userService.assignBookToUser(request);
         return ResponseEntity.ok(response);
