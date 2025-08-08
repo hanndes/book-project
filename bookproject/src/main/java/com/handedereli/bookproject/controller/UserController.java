@@ -1,6 +1,9 @@
 package com.handedereli.bookproject.controller;
 
-import com.handedereli.bookproject.entities.User;
+import com.handedereli.bookproject.controller.dto.AssignBookToUserRequestDTO;
+import com.handedereli.bookproject.controller.dto.UserRequestDTO;
+import com.handedereli.bookproject.controller.dto.UserResponseDTO;
+import com.handedereli.bookproject.controller.dto.UserWithBooksResponseDTO;
 import com.handedereli.bookproject.services.BookService;
 import com.handedereli.bookproject.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,17 +20,28 @@ public class UserController {
     private final BookService bookService;
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user){
-        User created = userService.creatUser(user);
+    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO dto){
+        System.out.println(dto.name());
+        UserResponseDTO created = userService.createUser(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
-
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<User> deleteUser( @PathVariable Integer id){
+    public ResponseEntity<UserResponseDTO> deleteUser( @PathVariable Integer id){
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
 
+    }
+    @PostMapping("/{id}/assign-book")
+    public ResponseEntity<UserWithBooksResponseDTO> assignBookToUser(@RequestBody AssignBookToUserRequestDTO request) {
+        UserWithBooksResponseDTO response = userService.assignBookToUser(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/mybooks")
+    public ResponseEntity<UserWithBooksResponseDTO> getMyBooks(@PathVariable Integer id){
+        UserWithBooksResponseDTO response = userService.getUserBooks(id);
+        return ResponseEntity.ok(response);
     }
 
 
