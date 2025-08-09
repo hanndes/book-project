@@ -11,7 +11,7 @@ public class OpenApiConfig {
     public OpenAPI openAPI(){
         return new OpenAPI()
                 .info(new Info()
-                        .title("todo API")
+                        .title("book-project API")
                         .version("1.0.0")
                         .description("todo"));
     }
