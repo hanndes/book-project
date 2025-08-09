@@ -1,4 +1,4 @@
-package com.handedereli.bookproject.controller.dto;
+package com.handedereli.bookproject.controller.dto.request;
 
 public record BookRequestDTO(
         String title,

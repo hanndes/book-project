@@ -1,8 +1,8 @@
 package com.handedereli.bookproject.controller;
 
 
-import com.handedereli.bookproject.controller.dto.BookRequestDTO;
-import com.handedereli.bookproject.controller.dto.BookResponseDTO;
+import com.handedereli.bookproject.controller.dto.request.BookRequestDTO;
+import com.handedereli.bookproject.controller.dto.response.BookResponseDTO;
 import com.handedereli.bookproject.services.BookService;
 import com.handedereli.bookproject.services.UserService;
 import lombok.RequiredArgsConstructor;
