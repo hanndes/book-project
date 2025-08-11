@@ -1,11 +1,12 @@
 package com.handedereli.bookproject.controller;
 
-import com.handedereli.bookproject.controller.dto.AssignBookToUserRequestDTO;
-import com.handedereli.bookproject.controller.dto.UserRequestDTO;
-import com.handedereli.bookproject.controller.dto.UserResponseDTO;
-import com.handedereli.bookproject.controller.dto.UserWithBooksResponseDTO;
-import com.handedereli.bookproject.services.BookService;
+import com.handedereli.bookproject.controller.dto.request.AssignBookToUserRequest;
+import com.handedereli.bookproject.controller.dto.request.UserRequest;
+import com.handedereli.bookproject.controller.dto.response.UserResponse;
+import com.handedereli.bookproject.controller.dto.response.UserWithBooksResponse;
 import com.handedereli.bookproject.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,32 +18,28 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private final BookService bookService;
 
     @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO dto){
-        System.out.println(dto.name());
-        UserResponseDTO created = userService.createUser(dto);
+    @Operation(summary = "Create a new user")
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest dto){
+        UserResponse created = userService.createUser(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> deleteUser( @PathVariable Integer id){
+    @Operation(summary = "Delete a user by ID")
+    public ResponseEntity<UserResponse> deleteUser(@PathVariable Integer id){
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
 
     }
     @PostMapping("/assign-book")
-    public ResponseEntity<UserWithBooksResponseDTO> assignBookToUser(@RequestBody AssignBookToUserRequestDTO request) {
-        UserWithBooksResponseDTO response = userService.assignBookToUser(request);
+    @Operation(summary = "Assign a book to a user")
+    public ResponseEntity<UserWithBooksResponse> assignBookToUser(@RequestBody AssignBookToUserRequest request) {
+        UserWithBooksResponse response = userService.assignBookToUser(request);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{id}/mybooks")
-    public ResponseEntity<UserWithBooksResponseDTO> getMyBooks(@PathVariable Integer id){
-        UserWithBooksResponseDTO response = userService.getUserBooks(id);
-        return ResponseEntity.ok(response);
-    }
 
 
 

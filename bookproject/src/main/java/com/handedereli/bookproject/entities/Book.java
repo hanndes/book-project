@@ -4,9 +4,12 @@ package com.handedereli.bookproject.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @Entity
-@Table(name = "book")
+@Table(name = "books")
 public class Book {
 
     @Id
@@ -26,4 +29,8 @@ public class Book {
     @ManyToOne
     @JoinColumn(name ="user_id") //Bu yapı book tablosunda user_id adında bir foreign key oluşturur.
     private User user;
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Favorite> favorites = new ArrayList<>();
+
 }

@@ -25,7 +25,7 @@ public class User {
     @Column(name ="gender")
     private String gender;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Book> books;
 
 }

@@ -25,6 +25,10 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, "BOOK_ALREADY_ASSIGNED", ex.getMessage(), request);
     }
 
+    @ExceptionHandler(AlreadyInFavoritesException.class)
+    public ResponseEntity<ErrorResponse> handleAlreadyInFavorites(AlreadyInFavoritesException ex, ServletWebRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "ALREADY_IN_Favorites", ex.getMessage(), request);
+    }
     private ResponseEntity<ErrorResponse> build(HttpStatus status, String errorCode, String message, ServletWebRequest request) {
         ErrorResponse error = new ErrorResponse(
                 message,

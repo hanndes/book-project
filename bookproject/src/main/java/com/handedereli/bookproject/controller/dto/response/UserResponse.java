@@ -1,7 +1,7 @@
 package com.handedereli.bookproject.controller.dto.response;
 
 
-public record UserResponseDTO(
+public record UserResponse(
         String name,
         String gender
 ) {}

@@ -2,7 +2,7 @@ package com.handedereli.bookproject.controller.dto.request;
 
 
 
-public record AssignBookToUserRequestDTO(
+public record AssignBookToUserRequest(
         Integer userId,
         Integer bookId
 ) {}

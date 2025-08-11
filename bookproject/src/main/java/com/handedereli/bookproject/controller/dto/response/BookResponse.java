@@ -1,8 +1,8 @@
 package com.handedereli.bookproject.controller.dto.response;
 
-public record BookResponseDTO(
-        Integer id,
+public record BookResponse(
         String title,
         String author
 ) {
+
 }

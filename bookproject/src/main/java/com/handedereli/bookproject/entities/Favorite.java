@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(name ="fav")
+@Table(name ="favorites")
 public class Favorite {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

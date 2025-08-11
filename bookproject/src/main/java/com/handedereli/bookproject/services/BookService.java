@@ -1,14 +1,15 @@
 package com.handedereli.bookproject.services;
-
-
-import com.handedereli.bookproject.controller.dto.BookRequestDTO;
-import com.handedereli.bookproject.controller.dto.BookResponseDTO;
+import com.handedereli.bookproject.controller.dto.request.BookRequest;
+import com.handedereli.bookproject.controller.dto.response.BookResponse;
 import com.handedereli.bookproject.entities.Book;
+import com.handedereli.bookproject.entities.User;
 import com.handedereli.bookproject.exceptions.BookNotFoundException;
+import com.handedereli.bookproject.exceptions.UserNotFoundException;
 import com.handedereli.bookproject.repositories.BookRepository;
+import com.handedereli.bookproject.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +18,10 @@ import java.util.List;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final UserRepository userRepository;
 
-    public BookResponseDTO createBook(BookRequestDTO dto) {
+    @Transactional
+    public BookResponse createBook(BookRequest dto) {
         Book book = new Book();
         book.setTitle(dto.title());
         book.setAuthor(dto.author());
@@ -26,42 +29,54 @@ public class BookService {
 
         Book saved = bookRepository.save(book);
 
-        return new BookResponseDTO(
-                saved.getId(),
+        return new BookResponse(
                 saved.getTitle(),
                 saved.getAuthor()
         );
     }
-    public void deleteBook(Integer id){
-        if (!bookRepository.existsById(id)) {
-            throw new BookNotFoundException(id);
-        }
+
+    public BookResponse deleteBook(Integer id) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException(id));
 
         bookRepository.deleteById(id);
+
+        return new BookResponse(
+                book.getTitle(),
+                book.getAuthor()
+        );
     }
 
-
-    public BookResponseDTO updateBook(Integer id, BookRequestDTO dto) {
+    public BookResponse updateBook(Integer id, BookRequest dto) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
         book.setTitle(dto.title());
         book.setAuthor(dto.author());
         book.setCategory(dto.category());
         Book saved = bookRepository.save(book);
-        return new BookResponseDTO(
-                saved.getId(),
+        return new BookResponse(
                 saved.getTitle(),
                 saved.getAuthor()
         );
     }
 
-    public List<BookResponseDTO> getAllBooks() {
+    public BookResponse getBookById(Integer id) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException(id));
+
+        return new BookResponse(
+                book.getTitle(),
+                book.getAuthor()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookResponse> getAllBooks() {
         List<Book> books = bookRepository.findAll();
-        List<BookResponseDTO> responseList = new ArrayList<>();
+        List<BookResponse> responseList = new ArrayList<>();
 
         for (Book book : books) {
-            BookResponseDTO dto = new BookResponseDTO(
-                    book.getId(),
+            BookResponse dto = new BookResponse(
                     book.getTitle(),
                     book.getAuthor()
             );
@@ -72,7 +87,16 @@ public class BookService {
     }
 
 
+    @Transactional(readOnly = true)
+    public List<BookResponse> getBooksByUser(Integer id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
 
-
+        List<BookResponse> result = new ArrayList<>();
+        for (Book b : user.getBooks()) {
+            result.add(new BookResponse(b.getTitle(), b.getAuthor()));
+        }
+        return result;
+    }
 
 }
