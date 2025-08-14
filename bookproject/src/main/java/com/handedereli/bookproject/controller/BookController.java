@@ -49,10 +49,10 @@ public class BookController {
         return ResponseEntity.ok(books);
     }
 
-    @GetMapping("/users/{id}/books")
+  /*  @GetMapping("/users/{id}/books")
     public ResponseEntity<List<BookResponse>> getBooksByUser(@PathVariable Integer id) {
         return ResponseEntity.ok(bookService.getBooksByUser(id));
-    }
+    }*/
 
 
 

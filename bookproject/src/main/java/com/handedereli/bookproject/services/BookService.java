@@ -2,11 +2,8 @@ package com.handedereli.bookproject.services;
 import com.handedereli.bookproject.controller.dto.request.BookRequest;
 import com.handedereli.bookproject.controller.dto.response.BookResponse;
 import com.handedereli.bookproject.entities.Book;
-import com.handedereli.bookproject.entities.User;
 import com.handedereli.bookproject.exceptions.BookNotFoundException;
-import com.handedereli.bookproject.exceptions.UserNotFoundException;
 import com.handedereli.bookproject.repositories.BookRepository;
-import com.handedereli.bookproject.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,85 +15,51 @@ import java.util.List;
 public class BookService {
 
     private final BookRepository bookRepository;
-    private final UserRepository userRepository;
 
     @Transactional
     public BookResponse createBook(BookRequest dto) {
-        Book book = new Book();
-        book.setTitle(dto.title());
-        book.setAuthor(dto.author());
-        book.setCategory(dto.category());
-
+        Book book = Book.setAll(dto);
         Book saved = bookRepository.save(book);
 
-        return new BookResponse(
-                saved.getTitle(),
-                saved.getAuthor()
-        );
+        return BookResponse.from(saved);
     }
 
+    @Transactional
     public BookResponse deleteBook(Integer id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
-
-        bookRepository.deleteById(id);
-
-        return new BookResponse(
-                book.getTitle(),
-                book.getAuthor()
-        );
+        bookRepository.delete(book);
+        return BookResponse.from(book);
     }
 
+    @Transactional
     public BookResponse updateBook(Integer id, BookRequest dto) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
-        book.setTitle(dto.title());
-        book.setAuthor(dto.author());
-        book.setCategory(dto.category());
-        Book saved = bookRepository.save(book);
-        return new BookResponse(
-                saved.getTitle(),
-                saved.getAuthor()
-        );
+        Book.setAll(dto);
+        return BookResponse.from(book);
     }
 
-    public BookResponse getBookById(Integer id) {
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException(id));
-
-        return new BookResponse(
-                book.getTitle(),
-                book.getAuthor()
-        );
+    @Transactional(readOnly = true)
+    public Book getBookEntityById(Integer bookId) {
+        return bookRepository.findById(bookId)
+                .orElseThrow(() -> new BookNotFoundException(bookId));
     }
-
+@Transactional(readOnly = true)
+    public BookResponse getBookById(Integer bookId) {
+        Book book = getBookEntityById(bookId);
+        return BookResponse.from(book);
+    }
     @Transactional(readOnly = true)
     public List<BookResponse> getAllBooks() {
         List<Book> books = bookRepository.findAll();
         List<BookResponse> responseList = new ArrayList<>();
 
         for (Book book : books) {
-            BookResponse dto = new BookResponse(
-                    book.getTitle(),
-                    book.getAuthor()
-            );
+            BookResponse dto = BookResponse.from(book);
             responseList.add(dto);
         }
 
         return responseList;
     }
-
-
-    @Transactional(readOnly = true)
-    public List<BookResponse> getBooksByUser(Integer id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
-
-        List<BookResponse> result = new ArrayList<>();
-        for (Book b : user.getBooks()) {
-            result.add(new BookResponse(b.getTitle(), b.getAuthor()));
-        }
-        return result;
-    }
-
 }

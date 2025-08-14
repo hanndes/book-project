@@ -12,6 +12,7 @@ import com.handedereli.bookproject.exceptions.UserNotFoundException;
 import com.handedereli.bookproject.repositories.BookRepository;
 import com.handedereli.bookproject.repositories.FavoriteRepository;
 import com.handedereli.bookproject.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,7 @@ public class FavoriteService {
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public FavoriteResponse addFavorite(FavoriteRequest dto) {
 
         if (favoriteRepository.existsByUserIdAndBookId(dto.userId(), dto.bookId())) {
@@ -39,20 +41,14 @@ public class FavoriteService {
         Book book = bookRepository.findById(dto.bookId())
                 .orElseThrow(() -> new BookNotFoundException(dto.bookId()));
 
-        Favorite fav = new Favorite();
-        fav.setUser(user);
-        fav.setBook(book);
-        fav.setAddedAt(LocalDate.now());
+        Favorite favorite = Favorite.of(user,book);
 
-        Favorite saved = favoriteRepository.save(fav);
+        Favorite saved = favoriteRepository.save(favorite);
 
-        return new FavoriteResponse(
-                user.getName(),
-                book.getTitle(),
-                saved.getAddedAt()
-        );
+        return FavoriteResponse.from(saved);
     }
 
+    @Transactional
     public List<FavoriteResponse> getFavoritesByUser(Integer userId) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);

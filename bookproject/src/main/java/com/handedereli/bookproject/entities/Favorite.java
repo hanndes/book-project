@@ -1,27 +1,39 @@
 package com.handedereli.bookproject.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@Data
 @Entity
-@Table(name ="favorites")
+@Table(name = "favorites",
+        uniqueConstraints = @UniqueConstraint(name = "uk_user_book", columnNames = {"user_id","book_id"}))
+@NoArgsConstructor
+@Getter
 public class Favorite {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(nullable = false)
+    private LocalDate addedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-    private LocalDate addedAt = LocalDate.now();
 
-
+    public static Favorite of(User user, Book book) {
+        Favorite f = new Favorite();
+        f.user = user;
+        f.book = book;
+        f.addedAt = LocalDate.now();
+        return f;
+    }
 }
+

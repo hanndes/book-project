@@ -6,7 +6,6 @@ public record UserRequest(
 
         @NotBlank(message ="name can not be empty")
         String name,
-
         String gender
 ) {
 }

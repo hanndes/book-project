@@ -33,6 +33,11 @@ public class UserController {
         return ResponseEntity.noContent().build();
 
     }
+  /*  @PutMapping("/{id}")
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Integer id,
+                                                   @RequestBody UserRequest request) {
+        return ResponseEntity.ok(userService.changeProfile(id, request));
+    }*/
     @PostMapping("/assign-book")
     @Operation(summary = "Assign a book to a user")
     public ResponseEntity<UserWithBooksResponse> assignBookToUser(@RequestBody AssignBookToUserRequest request) {
