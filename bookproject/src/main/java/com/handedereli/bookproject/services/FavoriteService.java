@@ -16,7 +16,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,12 +40,20 @@ public class FavoriteService {
         Book book = bookRepository.findById(dto.bookId())
                 .orElseThrow(() -> new BookNotFoundException(dto.bookId()));
 
-        Favorite favorite = Favorite.of(user,book);
+        Favorite favorite = new Favorite();
+        favorite.setUser(user);
+        favorite.setBook(book);
+        favorite.setAddedAt(java.time.LocalDate.now()); // Favorite entity’de vardı
 
         Favorite saved = favoriteRepository.save(favorite);
 
-        return FavoriteResponse.from(saved);
+        return new FavoriteResponse(
+                saved.getUser().getName(),
+                saved.getBook().getTitle(),
+                saved.getAddedAt()
+        );
     }
+
 
     @Transactional
     public List<FavoriteResponse> getFavoritesByUser(Integer userId) {

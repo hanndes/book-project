@@ -18,48 +18,84 @@ public class BookService {
 
     @Transactional
     public BookResponse createBook(BookRequest dto) {
-        Book book = Book.setAll(dto);
+        Book book = new Book();
+        book.setTitle(dto.title());
+        book.setAuthor(dto.author());
+        book.setCategory(dto.category());
+
         Book saved = bookRepository.save(book);
 
-        return BookResponse.from(saved);
+        return new BookResponse(
+                saved.getTitle(),
+                saved.getAuthor(),
+                saved.getCategory()
+        );
     }
+
 
     @Transactional
     public BookResponse deleteBook(Integer id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
+
         bookRepository.delete(book);
-        return BookResponse.from(book);
+
+        return new BookResponse(
+                book.getTitle(),
+                book.getAuthor(),
+                book.getCategory()
+        );
     }
+
 
     @Transactional
     public BookResponse updateBook(Integer id, BookRequest dto) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
-        Book.setAll(dto);
-        return BookResponse.from(book);
+        book.setTitle(dto.title());
+        book.setAuthor(dto.author());
+        book.setCategory(dto.category());
+
+        Book updated = bookRepository.save(book);
+
+        return new BookResponse(
+                updated.getTitle(),
+                updated.getAuthor(),
+                updated.getCategory()
+        );
     }
 
-    @Transactional(readOnly = true)
+
     public Book getBookEntityById(Integer bookId) {
         return bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
     }
-@Transactional(readOnly = true)
+
+    @Transactional(readOnly = true)
     public BookResponse getBookById(Integer bookId) {
         Book book = getBookEntityById(bookId);
-        return BookResponse.from(book);
+        return new BookResponse(
+                book.getTitle(),
+                book.getAuthor(),
+                book.getCategory()
+        );
     }
+
+
     @Transactional(readOnly = true)
     public List<BookResponse> getAllBooks() {
         List<Book> books = bookRepository.findAll();
         List<BookResponse> responseList = new ArrayList<>();
-
         for (Book book : books) {
-            BookResponse dto = BookResponse.from(book);
+            BookResponse dto = new BookResponse(
+                    book.getTitle(),
+                    book.getAuthor(),
+                    book.getCategory()
+            );
             responseList.add(dto);
         }
-
         return responseList;
     }
+
+
 }

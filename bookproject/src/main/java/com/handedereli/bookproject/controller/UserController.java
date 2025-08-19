@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -33,20 +33,19 @@ public class UserController {
         return ResponseEntity.noContent().build();
 
     }
-  /*  @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Integer id,
-                                                   @RequestBody UserRequest request) {
-        return ResponseEntity.ok(userService.changeProfile(id, request));
-    }*/
+    @GetMapping("/{id}")
+    @Operation(summary = "Get a user by ID")
+    public ResponseEntity<UserResponse> getUser(@PathVariable Integer id) {
+        UserResponse user = userService.getUser(id);
+        return ResponseEntity.ok(user);
+    }
+
+
     @PostMapping("/assign-book")
     @Operation(summary = "Assign a book to a user")
     public ResponseEntity<UserWithBooksResponse> assignBookToUser(@RequestBody AssignBookToUserRequest request) {
         UserWithBooksResponse response = userService.assignBookToUser(request);
         return ResponseEntity.ok(response);
     }
-
-
-
-
 
 }

@@ -1,14 +1,15 @@
 package com.handedereli.bookproject.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "favorites",
-        uniqueConstraints = @UniqueConstraint(name = "uk_user_book", columnNames = {"user_id","book_id"}))
+@Data
+@Table(name = "favorites")
 @NoArgsConstructor
 @Getter
 public class Favorite {
@@ -26,14 +27,5 @@ public class Favorite {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
-
-
-    public static Favorite of(User user, Book book) {
-        Favorite f = new Favorite();
-        f.user = user;
-        f.book = book;
-        f.addedAt = LocalDate.now();
-        return f;
-    }
 }
 
